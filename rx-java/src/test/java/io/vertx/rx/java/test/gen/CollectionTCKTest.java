@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.codegen.testmodel.CollectionTCK;
 import io.vertx.rxjava.codegen.testmodel.RefedInterface1;
 import io.vertx.rxjava.codegen.testmodel.RefedInterface2;
+import io.vertx.rxjava.core.buffer.Buffer;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,13 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-
-import static io.vertx.rx.java.test.gen.ApiTCKTest.get;
-import static io.vertx.rx.java.test.gen.ApiTCKTest.set;
-import static io.vertx.rx.java.test.gen.ApiTCKTest.list;
-import static io.vertx.rx.java.test.gen.ApiTCKTest.map;
-import static org.junit.Assert.assertTrue;
+import static io.vertx.rx.java.test.gen.ApiTCKTest.*;
+import static java.util.stream.Collectors.*;
+import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -68,7 +65,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerListVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerListVertxGen(checker.<List<RefedInterface1>>resultHandler(it ->
+    obj.methodWithHandlerListVertxGen(checker.resultHandler(it ->
         assertEquals(Arrays.asList("foo", "bar"), it.stream().map(RefedInterface1::getString).collect(Collectors.toList()))));
     assertEquals(1, checker.count);
   }
@@ -76,7 +73,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerListAbstractVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerListAbstractVertxGen(checker.<List<RefedInterface2>>resultHandler(it ->
+    obj.methodWithHandlerListAbstractVertxGen(checker.resultHandler(it ->
         assertEquals(Arrays.asList("abstractfoo", "abstractbar"), it.stream().map(RefedInterface2::getString).collect(Collectors.toList()))));
     assertEquals(1, checker.count);
   }
@@ -85,7 +82,7 @@ public class CollectionTCKTest {
   public void testMethodWithHandlerAsyncResultListVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
     obj.methodWithHandlerAsyncResultListVertxGen(
-        checker.<List<RefedInterface1>>asyncResultHandler(event -> {
+      checker.asyncResultHandler(event -> {
           assertEquals(2, event.size());
           assertEquals("foo", event.get(0).getString());
           assertEquals("bar", event.get(1).getString());
@@ -97,7 +94,7 @@ public class CollectionTCKTest {
   public void testMethodWithHandlerAsyncResultListAbstractVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
     obj.methodWithHandlerAsyncResultListAbstractVertxGen(
-        checker.<List<RefedInterface2>>asyncResultHandler(event -> {
+      checker.asyncResultHandler(event -> {
           assertEquals(2, event.size());
           assertEquals("abstractfoo", event.get(0).getString());
           assertEquals("abstractbar", event.get(1).getString());
@@ -116,7 +113,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerSetVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerSetVertxGen(checker.<Set<RefedInterface1>>resultHandler(event -> {
+    obj.methodWithHandlerSetVertxGen(checker.resultHandler(event -> {
       List<String> list = event.stream().map(it -> it.getString()).collect(Collectors.toList());
       Collections.sort(list);
       assertEquals(Arrays.asList("bar", "foo"), list);
@@ -127,7 +124,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerSetAbstractVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerSetAbstractVertxGen(checker.<Set<RefedInterface2>>resultHandler(event -> {
+    obj.methodWithHandlerSetAbstractVertxGen(checker.resultHandler(event -> {
       List<String> list = event.stream().map(it -> it.getString()).collect(Collectors.toList());
       Collections.sort(list);
       assertEquals(Arrays.asList("abstractbar", "abstractfoo"), list);
@@ -139,7 +136,7 @@ public class CollectionTCKTest {
   public void testMethodWithHandlerAsyncResultSetVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
     obj.methodWithHandlerAsyncResultSetVertxGen(
-        checker.<Set<RefedInterface1>>asyncResultHandler(event -> {
+      checker.asyncResultHandler(event -> {
           List<String> list = event.stream().map(RefedInterface1::getString).collect(Collectors.toList());
           Collections.sort(list);
           assertEquals(Arrays.asList("bar", "foo"), list);
@@ -151,7 +148,7 @@ public class CollectionTCKTest {
   public void testMethodWithHandlerAsyncResultSetAbstractVertxGen() {
     AsyncResultChecker checker = new AsyncResultChecker();
     obj.methodWithHandlerAsyncResultSetAbstractVertxGen(
-        checker.<Set<RefedInterface2>>asyncResultHandler(event -> {
+      checker.asyncResultHandler(event -> {
           List<String> list = event.stream().map(RefedInterface2::getString).collect(Collectors.toList());
           Collections.sort(list);
           assertEquals(Arrays.asList("abstractbar", "abstractfoo"), list);
@@ -193,7 +190,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerSetJsonObject() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerSetJsonObject(checker.<Set<JsonObject>>resultHandler(r -> {
+    obj.methodWithHandlerSetJsonObject(checker.resultHandler(r -> {
       assertEquals(Arrays.asList(new JsonObject().put("cheese", "stilton"), new JsonObject().put("socks", "tartan")), new ArrayList<>(r));
     }));
     assertEquals(1, checker.count);
@@ -202,7 +199,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerAsyncResultSetJsonObject() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerAsyncResultSetJsonObject(checker.<Set<JsonObject>>asyncResultHandler(it ->
+    obj.methodWithHandlerAsyncResultSetJsonObject(checker.asyncResultHandler(it ->
         assertEquals(Arrays.asList(new JsonObject().put("cheese", "stilton"), new JsonObject().put("socks", "tartan")), new ArrayList<>(it))
     ));
     assertEquals(1, checker.count);
@@ -239,7 +236,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerSetJsonArray() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerSetJsonArray(checker.<Set<JsonArray>>resultHandler(it ->
+    obj.methodWithHandlerSetJsonArray(checker.resultHandler(it ->
         assertEquals(Arrays.asList(new JsonArray().add("green").add("blue"), new JsonArray().add("yellow").add("purple")), new ArrayList<>(it))
     ));
     assertEquals(1, checker.count);
@@ -248,7 +245,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerAsyncResultSetJsonArray() {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerAsyncResultSetJsonArray(checker.<Set<JsonArray>>asyncResultHandler(it ->
+    obj.methodWithHandlerAsyncResultSetJsonArray(checker.asyncResultHandler(it ->
         assertEquals(Arrays.asList(new JsonArray().add("green").add("blue"), new JsonArray().add("yellow").add("purple")), new ArrayList<>(it))
     ));
     assertEquals(1, checker.count);
@@ -263,7 +260,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerListDataObject() throws Exception {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerListDataObject(checker.<List<TestDataObject>>resultHandler(list -> {
+    obj.methodWithHandlerListDataObject(checker.resultHandler(list -> {
       assertEquals(2, list.size());
       assertEquals("String 1", list.get(0).getFoo());
       assertEquals(1, list.get(0).getBar());
@@ -278,7 +275,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerSetDataObject() throws Exception {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerSetDataObject(checker.<Set<TestDataObject>>resultHandler(set -> {
+    obj.methodWithHandlerSetDataObject(checker.resultHandler(set -> {
       List<TestDataObject> list = new ArrayList<>(set);
       Collections.sort(list, (c1, c2) -> ((Integer) c1.getBar()).compareTo(c2.getBar()));
       assertEquals("String 1", list.get(0).getFoo());
@@ -294,7 +291,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerAsyncResultListDataObject() throws Exception {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerAsyncResultListDataObject(checker.<List<TestDataObject>>asyncResultHandler(list -> {
+    obj.methodWithHandlerAsyncResultListDataObject(checker.asyncResultHandler(list -> {
       assertEquals(2, list.size());
       assertEquals("String 1", list.get(0).getFoo());
       assertEquals(1, list.get(0).getBar());
@@ -309,7 +306,7 @@ public class CollectionTCKTest {
   @Test
   public void testMethodWithHandlerAsyncResultSetDataObject() throws Exception {
     AsyncResultChecker checker = new AsyncResultChecker();
-    obj.methodWithHandlerAsyncResultSetDataObject(checker.<Set<TestDataObject>>asyncResultHandler(set -> {
+    obj.methodWithHandlerAsyncResultSetDataObject(checker.asyncResultHandler(set -> {
       List<TestDataObject> list = new ArrayList<>(set);
       Collections.sort(list, (c1, c2) -> ((Integer) c1.getBar()).compareTo(c2.getBar()));
       assertEquals("String 1", list.get(0).getFoo());
@@ -538,4 +535,129 @@ public class CollectionTCKTest {
     assertEquals(set(TestEnum.JULIEN, TestEnum.TIM), obj.methodWithSetEnumReturn());
   }
 
+  @Test
+  public void testMethodWithListVariableArgReturn() throws Exception {
+    JsonObject jsonObject = new JsonObject().put("name", "sardine").put("city", "marseille");
+    List<JsonObject> jsonObjects = obj.methodWithListVariableArgReturn(3, jsonObject);
+    assertEquals(3, jsonObjects.size());
+    jsonObjects.forEach(json -> {
+      assertEquals(jsonObject.getString("name"), json.getString("name"));
+      assertEquals(jsonObject.getString("city"), json.getString("city"));
+    });
+
+    Buffer buffer = Buffer.buffer("The quick brown fox jumps over the lazy dog");
+    List<Buffer> buffers = obj.methodWithListVariableArgReturn(5, buffer);
+    assertEquals(5, buffers.size());
+    buffers.forEach(buf -> {
+      assertEquals(buffer.toString(), buf.toString());
+    });
+  }
+
+  @Test
+  public void testMethodWithSetVariableArgReturn() throws Exception {
+    JsonObject jsonObject = new JsonObject().put("name", "sardine").put("city", "marseille");
+    Set<JsonObject> jsonObjects = obj.methodWithSetVariableArgReturn(3, jsonObject);
+    assertEquals(1, jsonObjects.size());
+    assertEquals(jsonObject.getString("name"), jsonObjects.iterator().next().getString("name"));
+    assertEquals(jsonObject.getString("city"), jsonObjects.iterator().next().getString("city"));
+
+    Buffer buffer = Buffer.buffer("The quick brown fox jumps over the lazy dog");
+    Set<Buffer> buffers = obj.methodWithSetVariableArgReturn(5, buffer);
+    assertEquals(1, buffers.size());
+    assertEquals(buffer.toString(), buffers.iterator().next().toString());
+  }
+
+  @Test
+  public void testMethodWithHandlerListVariableArg() throws Exception {
+    AsyncResultChecker checker = new AsyncResultChecker();
+
+    JsonObject jsonObject = new JsonObject().put("name", "sardine").put("city", "marseille");
+    obj.methodWithHandlerListVariableArg(3, jsonObject, checker.resultHandler(jsonObjects -> {
+      assertEquals(3, jsonObjects.size());
+      jsonObjects.forEach(json -> {
+        assertEquals(jsonObject.getString("name"), json.getString("name"));
+        assertEquals(jsonObject.getString("city"), json.getString("city"));
+      });
+    }));
+
+    Buffer buffer = Buffer.buffer("The quick brown fox jumps over the lazy dog");
+    obj.methodWithHandlerListVariableArg(5, buffer, checker.resultHandler(buffers -> {
+      assertEquals(5, buffers.size());
+      buffers.forEach(buf -> {
+        assertEquals(buffer.toString(), buf.toString());
+      });
+    }));
+
+    assertEquals(2, checker.count);
+  }
+
+  @Test
+  public void testMethodWithHandlertSetVariableArg() throws Exception {
+    AsyncResultChecker checker = new AsyncResultChecker();
+
+    JsonObject jsonObject = new JsonObject().put("name", "sardine").put("city", "marseille");
+    obj.methodWithHandlerSetVariableArg(3, jsonObject, checker.resultHandler(jsonObjects -> {
+      assertEquals(1, jsonObjects.size());
+      assertEquals(jsonObject.getString("name"), jsonObjects.iterator().next().getString("name"));
+      assertEquals(jsonObject.getString("city"), jsonObjects.iterator().next().getString("city"));
+    }));
+
+    Buffer buffer = Buffer.buffer("The quick brown fox jumps over the lazy dog");
+    obj.methodWithHandlerSetVariableArg(5, buffer, checker.resultHandler(buffers -> {
+      assertEquals(1, buffers.size());
+      assertEquals(buffer.toString(), buffers.iterator().next().toString());
+    }));
+
+    assertEquals(2, checker.count);
+  }
+
+  @Test
+  public void testMethodWithHandlerAsyncResultListVariableArg() throws Exception {
+    JsonObject jsonObject = new JsonObject().put("name", "sardine").put("city", "marseille");
+    List<JsonObject> jsonObjects = obj.rxMethodWithHandlerAsyncResultListVariableArg(3, jsonObject).toBlocking().value();
+    assertEquals(3, jsonObjects.size());
+    jsonObjects.forEach(json -> {
+      assertEquals(jsonObject.getString("name"), json.getString("name"));
+      assertEquals(jsonObject.getString("city"), json.getString("city"));
+    });
+
+    Buffer buffer = Buffer.buffer("The quick brown fox jumps over the lazy dog");
+    List<Buffer> buffers = obj.rxMethodWithHandlerAsyncResultListVariableArg(5, buffer).toBlocking().value();
+    assertEquals(5, buffers.size());
+    buffers.forEach(buf -> {
+      assertEquals(buffer.toString(), buf.toString());
+    });
+  }
+
+  @Test
+  public void testMethodWithHandlerAsyncResultSetVariableArg() throws Exception {
+    JsonObject jsonObject = new JsonObject().put("name", "sardine").put("city", "marseille");
+    Set<JsonObject> jsonObjects = obj.rxMethodWithHandlerAsyncResultSetVariableArg(3, jsonObject).toBlocking().value();
+    assertEquals(1, jsonObjects.size());
+    assertEquals(jsonObject.getString("name"), jsonObjects.iterator().next().getString("name"));
+    assertEquals(jsonObject.getString("city"), jsonObjects.iterator().next().getString("city"));
+
+    Buffer buffer = Buffer.buffer("The quick brown fox jumps over the lazy dog");
+    Set<Buffer> buffers = obj.rxMethodWithHandlerAsyncResultSetVariableArg(5, buffer).toBlocking().value();
+    assertEquals(1, buffers.size());
+    assertEquals(buffer.toString(), buffers.iterator().next().toString());
+  }
+
+  @Test
+  public void testMethodWithFunctionListSetVariableArg() throws Exception {
+    JsonObject jsonObject = new JsonObject().put("text", "The quick brown fox jumps over the lazy dog");
+
+    Set<io.vertx.core.buffer.Buffer> buffers = obj.methodWithFunctionListSetVariableArg(3, jsonObject, jsonObjects -> {
+      assertEquals(3, jsonObjects.size());
+      return jsonObjects.stream()
+        .map(json -> json.getString("text"))
+        .map(Buffer::buffer)
+        .map(Buffer::getDelegate) // this is needed because rx.Buffer does not override equals/hashCode
+        .collect(toSet());
+    });
+
+
+    assertEquals(1, buffers.size());
+    assertEquals(jsonObject.getString("text"), buffers.iterator().next().toString());
+  }
 }
