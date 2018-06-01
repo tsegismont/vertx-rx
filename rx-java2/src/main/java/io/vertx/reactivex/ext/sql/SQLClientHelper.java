@@ -26,6 +26,12 @@ import java.util.function.Function;
  */
 public class SQLClientHelper {
 
+  public static <T> Flowable<T> withConnectionFlowable(SQLClient client, Function<SQLConnection, Flowable<T>> sourceSupplier) {
+    return client.rxGetConnection().flatMapPublisher(conn -> {
+      return sourceSupplier.apply(conn).doFinally(conn::close);
+    });
+  }
+
   /**
    * Generates a {@link Flowable} from {@link SQLConnection} operations executed inside a transaction.
    *
@@ -35,8 +41,8 @@ public class SQLClientHelper {
    * @return a {@link Flowable} generated from {@link SQLConnection} operations executed inside a transaction
    */
   public static <T> Flowable<T> inTransactionFlowable(SQLClient client, Function<SQLConnection, Flowable<T>> sourceSupplier) {
-    return client.rxGetConnection().flatMapPublisher(conn -> {
-      return sourceSupplier.apply(conn).compose(new InTransactionFlowable<>(conn)).doFinally(conn::close);
+    return withConnectionFlowable(client, conn -> {
+      return sourceSupplier.apply(conn).compose(new InTransactionFlowable<>(conn));
     });
   }
 
